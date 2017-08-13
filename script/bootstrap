@@ -4,7 +4,22 @@ function main {
   local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
   source "$shome/script/profile"
 
-  uname -a
+  local url_sam_Darwin="https://github.com/awslabs/aws-sam-local/releases/download/v${SAM_VERSION}/sam_${SAM_VERSION}_darwin_amd64.tar.gz"
+  local url_sam_Linux="https://github.com/awslabs/aws-sam-local/releases/download/v${SAM_VERSION}/sam_${SAM_VERSION}_linux_amd64.tar.gz"
+
+  local url_sam="url_sam_$(uname -s)"
+  local fnm_sam="$(basename "${!url_sam}")"
+  cache curl "$fnm_sam" "${!url_sam}"
+  
+  mkdir -p "$shome/vendor/sam-${SAM_VERSION}"
+  pushd "$shome/vendor/sam-${SAM_VERSION}"
+  tar xfz "${DATA}/cache/curl/$fnm_sam"
+  mkdir -p "$shome/bin"
+  chmod 755 sam
+  mv sam "$shome/bin/"
+  popd
+
+  rm -rf "$shome/vendor/sam-${SAM_VERSION}"
 }
 
 main "$@"
