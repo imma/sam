@@ -5,6 +5,8 @@ function main {
   source "$shome/script/profile"
 
   block compile pipenv
+
+  ln -nfs "$(pipenv run which sam)" "$shome/bin/sam"
 }
 
 main "$@"
